@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My mega map</title>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+</head>
+<body>
+    <div id="map" style="width: 1500px; height: 800px"></div>
+    <script type="text/javascript">
+        ymaps.ready(init);
+        var myMap;
+
+        function init(){
+            myMap = new ymaps.Map("map", {
+                center: [56.319065, 44.012852],
+                zoom: 12
+            });
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    console.log(xhttp.responseText);
+                    var pandas = JSON.parse(xhttp.responseText);
+                    pandas.forEach(function (entry) {
+                        console.log('Point ' + entry.name +
+                                ' at (' + entry.lon + ',' + entry.lat + ')');
+                        myMap.geoObjects.add(new ymaps.Placemark(
+                                [entry.lon, entry.lat],
+                                {
+                                    hintContent: entry.name,
+                                    balloonContent: entry.comment
+                                }));
+                    });
+                }
+            };
+
+            xhttp.open("GET", 'http://localhost:8733/points', true);
+            xhttp.send();
+        }
+    </script>
+</body>
+</html>

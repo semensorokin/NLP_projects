@@ -1,0 +1,5 @@
+https://tech.yandex.ru/maps/doc/jsapi/2.1/quick-start/tasks/quick-start-docpage?from=jsapi
+
+https://tech.yandex.ru/maps/jsbox/2.1?from=jsapi
+
+

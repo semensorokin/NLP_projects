@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My mega map</title>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+</head>
+<body>
+    <div id="map" style="width: 1500px; height: 800px"></div>
+    <script type="text/javascript">
+        ymaps.ready(init);
+        var myMap;
+
+        function init(){
+            myMap = new ymaps.Map("map", {
+                center: [56.319065, 44.012852],
+                zoom: 13
+            });
+        }
+    </script>
+</body>
+</html>
