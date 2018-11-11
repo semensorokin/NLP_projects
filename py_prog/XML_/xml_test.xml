@@ -1,0 +1,24 @@
+<data>
+    <student name="Ivan" surname="Ivanov">
+        <subject name="Proga">8</subject>
+        <subject name="Matan">6</subject>
+        <subject name="Eng">10</subject>
+        <subject name="Linal">7</subject>
+    </student>
+
+    <student name="Igor" surname="Petrov">
+        <subject name="Proga">5</subject>
+        <subject name="Matan">6</subject>
+        <subject name="Eng">8</subject>
+        <subject name="Linal">5</subject>
+    </student>
+
+    <student name="John" surname="Snow">
+        <subject name="Proga">3</subject>
+        <subject name="Matan">4</subject>
+        <subject name="Eng">3</subject>
+        <subject name="Linal">3</subject>
+    </student>
+    <student name="Sansa" surname="Stark" />
+<student name="Doctor" surname="Who" />
+<student name="5" surname="6"><subject name="Proga">6</subject><subject name="Matan">7</subject><subject name="Eng">8</subject><subject name="Linal">10</subject></student></data>
