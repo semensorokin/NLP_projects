@@ -4,7 +4,9 @@
 !ls
 ```
 
-    cloze_task_raw_data.xlsx  Compare_data.ipynb  LSTM_probability.xlsx
+    cloze_task_average_accuracy.xlsx  Compare_data.md	 Tag_cloze_task.ipynb
+    cloze_task_raw_data.xlsx	  LSTM_probability.xlsx
+    Compare_data.ipynb		  output.xlsx
 
 
 
@@ -176,8 +178,14 @@ gb.shape
 gg= data_cloze.groupby(['shown', 'accuracy']).size()
 gg = gg.reset_index(level=['shown', 'accuracy']) 
 gg.columns = ['shown', 'accuracy', 'all_fr']
+part0 = gg[gg.all_fr.max() == gg.all_fr]
+max_value = gg[gg.shown == 'В'].all_fr.sum()
+print(max_value)
 gg.head(), gg.shape
 ```
+
+    701
+
 
 
 
@@ -295,16 +303,146 @@ gg.head()
 
 
 ```python
-gg['prob'] = np.where(gg.accuracy_x==1., gg.all_fr/gg.sum_fr, 0)
+print(gg.head())
+def normal(x):
+    return max_value/x
+gg['index_norm'] = gg.sum_fr
+gg.index_norm = gg.index_norm.apply(normal)
+print(gg.head())
+gg['prob'] = np.where(gg.accuracy_x==1., (gg.all_fr*gg.index_norm)/(gg.index_norm*gg.sum_fr), 0)
 res = gg[['shown', 'accuracy_x','sum_fr','prob']]
 res = res[res.prob!=0.]
-res.shape
+print(res.shape)
+print(res.head())
+```
+
+           shown  accuracy_x  all_fr  sum_fr  accuracy_y
+    0    Start_1         0.0     138     138         0.0
+    1   Start_10         0.0      70      71         1.0
+    2   Start_10         1.0       1      71         1.0
+    3  Start_100         0.0      16      16         0.0
+    4  Start_101         0.0      16      16         0.0
+           shown  accuracy_x  all_fr  sum_fr  accuracy_y  index_norm
+    0    Start_1         0.0     138     138         0.0    5.079710
+    1   Start_10         0.0      70      71         1.0    9.873239
+    2   Start_10         1.0       1      71         1.0    9.873239
+    3  Start_100         0.0      16      16         0.0   43.812500
+    4  Start_101         0.0      16      16         0.0   43.812500
+    (679, 4)
+            shown  accuracy_x  sum_fr      prob
+    2    Start_10         1.0      71  0.014085
+    8   Start_104         1.0      16  0.125000
+    15  Start_110         1.0     151  0.006623
+    19  Start_113         1.0     112  0.026786
+    21  Start_114         1.0      93  0.032258
+
+
+
+```python
+res[res.prob>=1.]
 ```
 
 
 
 
-    (679, 4)
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>shown</th>
+      <th>accuracy_x</th>
+      <th>sum_fr</th>
+      <th>prob</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>311</th>
+      <td>В современном обществе семья и школа оказывают...</td>
+      <td>1.0</td>
+      <td>17</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>421</th>
+      <td>Во избежание ожогов надо нанести на лицо небол...</td>
+      <td>1.0</td>
+      <td>15</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>424</th>
+      <td>Во избежание ожогов надо нанести на лицо небол...</td>
+      <td>1.0</td>
+      <td>15</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>548</th>
+      <td>Дрозды и скворцы начали вить семейные гнёзда н...</td>
+      <td>1.0</td>
+      <td>15</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>738</th>
+      <td>Зачем ему звонить‚ если откликается спокойный ...</td>
+      <td>1.0</td>
+      <td>17</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>795</th>
+      <td>Ирине досталась отдельная комната в двухкомнатной</td>
+      <td>1.0</td>
+      <td>16</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>815</th>
+      <td>Какие главные лекарства должны входить</td>
+      <td>1.0</td>
+      <td>63</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1184</th>
+      <td>Олень бродил среди берёз‚ жевал талый снег</td>
+      <td>1.0</td>
+      <td>15</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1525</th>
+      <td>С нескрываемой едкой иронией отзываются они др...</td>
+      <td>1.0</td>
+      <td>15</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1552</th>
+      <td>Собаку‚ виновницу случившегося‚ приказали сечь...</td>
+      <td>1.0</td>
+      <td>15</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 
@@ -403,6 +541,535 @@ data_result = data_result[['shown','answer_x','prob_x','prob_y']]
 data_result.columns = ['shown', 'answer', 'prob_by_model', 'prob_by_human']
 data_result['R^2'] = (data_result.prob_by_human-data_result.prob_by_model)**2
 data
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>item.id</th>
+      <th>word.serial.no</th>
+      <th>shown</th>
+      <th>answer</th>
+      <th>prob</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>1</td>
+      <td>Start_102</td>
+      <td>на</td>
+      <td>0.016503</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>2</td>
+      <td>На</td>
+      <td>болотах</td>
+      <td>0.000006</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>3</td>
+      <td>На болотах</td>
+      <td>оставался</td>
+      <td>0.000138</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>4</td>
+      <td>На болотах оставался</td>
+      <td>еще</td>
+      <td>0.124899</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>5</td>
+      <td>На болотах оставался ещё</td>
+      <td>лед</td>
+      <td>0.002193</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>1</td>
+      <td>6</td>
+      <td>На болотах оставался ещё лёд‚</td>
+      <td>но</td>
+      <td>0.039917</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1</td>
+      <td>7</td>
+      <td>На болотах оставался ещё лёд‚ но</td>
+      <td>на</td>
+      <td>0.031502</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>8</td>
+      <td>На болотах оставался ещё лёд‚ но на</td>
+      <td>берегах</td>
+      <td>0.003701</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1</td>
+      <td>9</td>
+      <td>На болотах оставался ещё лёд‚ но на берегах</td>
+      <td>реки</td>
+      <td>0.014212</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>1</td>
+      <td>10</td>
+      <td>На болотах оставался ещё лёд‚ но на берегах реки</td>
+      <td>появилась</td>
+      <td>0.000670</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>1</td>
+      <td>11</td>
+      <td>На болотах оставался ещё лёд‚ но на берегах ре...</td>
+      <td>трава</td>
+      <td>0.003874</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2</td>
+      <td>1</td>
+      <td>Start_102</td>
+      <td>он</td>
+      <td>0.014427</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>2</td>
+      <td>2</td>
+      <td>Он</td>
+      <td>ловко</td>
+      <td>0.000068</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>2</td>
+      <td>3</td>
+      <td>Он ловко</td>
+      <td>поддел</td>
+      <td>0.004476</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>2</td>
+      <td>4</td>
+      <td>Он ловко поддел</td>
+      <td>концом</td>
+      <td>0.000468</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>2</td>
+      <td>5</td>
+      <td>Он ловко поддел концом</td>
+      <td>ножа</td>
+      <td>0.045508</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>2</td>
+      <td>6</td>
+      <td>Он ловко поддел концом ножа</td>
+      <td>замочки</td>
+      <td>0.000002</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>2</td>
+      <td>7</td>
+      <td>Он ловко поддел концом ножа замочки‚</td>
+      <td>и</td>
+      <td>0.051944</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>2</td>
+      <td>8</td>
+      <td>Он ловко поддел концом ножа замочки‚ и</td>
+      <td>они</td>
+      <td>0.072151</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>2</td>
+      <td>9</td>
+      <td>Он ловко поддел концом ножа замочки‚ и они</td>
+      <td>отскочили</td>
+      <td>0.002742</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>3</td>
+      <td>1</td>
+      <td>Start_102</td>
+      <td>ваня</td>
+      <td>0.000031</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>3</td>
+      <td>2</td>
+      <td>Ваня</td>
+      <td>раскрыл</td>
+      <td>0.000194</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>3</td>
+      <td>3</td>
+      <td>Ваня раскрыл</td>
+      <td>было</td>
+      <td>0.004079</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>3</td>
+      <td>4</td>
+      <td>Ваня раскрыл было</td>
+      <td>рот</td>
+      <td>0.467625</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>3</td>
+      <td>5</td>
+      <td>Ваня раскрыл было рот‚</td>
+      <td>но</td>
+      <td>0.661029</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>3</td>
+      <td>6</td>
+      <td>Ваня раскрыл было рот‚ но</td>
+      <td>понял</td>
+      <td>0.004546</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>3</td>
+      <td>7</td>
+      <td>Ваня раскрыл было рот‚ но понял‚</td>
+      <td>что</td>
+      <td>0.958914</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>3</td>
+      <td>8</td>
+      <td>Ваня раскрыл было рот‚ но понял‚ что</td>
+      <td>что-то</td>
+      <td>0.001715</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>3</td>
+      <td>9</td>
+      <td>Ваня раскрыл было рот‚ но понял‚ что что-то</td>
+      <td>не</td>
+      <td>0.241922</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>3</td>
+      <td>10</td>
+      <td>Ваня раскрыл было рот‚ но понял‚ что что-то не</td>
+      <td>так</td>
+      <td>0.575578</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1333</th>
+      <td>142</td>
+      <td>1</td>
+      <td>Start_56</td>
+      <td>ненужный</td>
+      <td>0.000001</td>
+    </tr>
+    <tr>
+      <th>1334</th>
+      <td>142</td>
+      <td>2</td>
+      <td>Ненужный</td>
+      <td>коврик</td>
+      <td>0.000038</td>
+    </tr>
+    <tr>
+      <th>1335</th>
+      <td>142</td>
+      <td>3</td>
+      <td>Ненужный коврик</td>
+      <td>из</td>
+      <td>0.012761</td>
+    </tr>
+    <tr>
+      <th>1336</th>
+      <td>142</td>
+      <td>4</td>
+      <td>Ненужный коврик из</td>
+      <td>твердой</td>
+      <td>0.000035</td>
+    </tr>
+    <tr>
+      <th>1337</th>
+      <td>142</td>
+      <td>5</td>
+      <td>Ненужный коврик из твёрдой</td>
+      <td>пластмассы</td>
+      <td>0.010510</td>
+    </tr>
+    <tr>
+      <th>1338</th>
+      <td>142</td>
+      <td>6</td>
+      <td>Ненужный коврик из твёрдой пластмассы</td>
+      <td>пригодится</td>
+      <td>0.000660</td>
+    </tr>
+    <tr>
+      <th>1339</th>
+      <td>142</td>
+      <td>7</td>
+      <td>Ненужный коврик из твёрдой пластмассы пригодится</td>
+      <td>как</td>
+      <td>0.021249</td>
+    </tr>
+    <tr>
+      <th>1340</th>
+      <td>142</td>
+      <td>8</td>
+      <td>Ненужный коврик из твёрдой пластмассы пригодит...</td>
+      <td>подставка</td>
+      <td>0.000019</td>
+    </tr>
+    <tr>
+      <th>1341</th>
+      <td>142</td>
+      <td>9</td>
+      <td>Ненужный коврик из твёрдой пластмассы пригодит...</td>
+      <td>для</td>
+      <td>0.512068</td>
+    </tr>
+    <tr>
+      <th>1342</th>
+      <td>142</td>
+      <td>10</td>
+      <td>Ненужный коврик из твёрдой пластмассы пригодит...</td>
+      <td>посуды</td>
+      <td>0.008749</td>
+    </tr>
+    <tr>
+      <th>1343</th>
+      <td>143</td>
+      <td>1</td>
+      <td>Start_78</td>
+      <td>когда</td>
+      <td>0.004141</td>
+    </tr>
+    <tr>
+      <th>1344</th>
+      <td>143</td>
+      <td>2</td>
+      <td>Когда</td>
+      <td>родители</td>
+      <td>0.000715</td>
+    </tr>
+    <tr>
+      <th>1345</th>
+      <td>143</td>
+      <td>3</td>
+      <td>Когда родители</td>
+      <td>пригрозили</td>
+      <td>0.000205</td>
+    </tr>
+    <tr>
+      <th>1346</th>
+      <td>143</td>
+      <td>4</td>
+      <td>Когда родители пригрозили</td>
+      <td>не</td>
+      <td>0.003967</td>
+    </tr>
+    <tr>
+      <th>1347</th>
+      <td>143</td>
+      <td>5</td>
+      <td>Когда родители пригрозили не</td>
+      <td>взять</td>
+      <td>0.000895</td>
+    </tr>
+    <tr>
+      <th>1348</th>
+      <td>143</td>
+      <td>6</td>
+      <td>Когда родители пригрозили не взять</td>
+      <td>ее</td>
+      <td>0.013125</td>
+    </tr>
+    <tr>
+      <th>1349</th>
+      <td>143</td>
+      <td>7</td>
+      <td>Когда родители пригрозили не взять её</td>
+      <td>с</td>
+      <td>0.098012</td>
+    </tr>
+    <tr>
+      <th>1350</th>
+      <td>143</td>
+      <td>8</td>
+      <td>Когда родители пригрозили не взять её с</td>
+      <td>собой</td>
+      <td>0.859795</td>
+    </tr>
+    <tr>
+      <th>1351</th>
+      <td>143</td>
+      <td>9</td>
+      <td>Когда родители пригрозили не взять её с собой‚</td>
+      <td>маша</td>
+      <td>0.000831</td>
+    </tr>
+    <tr>
+      <th>1352</th>
+      <td>143</td>
+      <td>10</td>
+      <td>Когда родители пригрозили не взять её с собой‚...</td>
+      <td>очень</td>
+      <td>0.002211</td>
+    </tr>
+    <tr>
+      <th>1353</th>
+      <td>143</td>
+      <td>11</td>
+      <td>Когда родители пригрозили не взять её с собой‚...</td>
+      <td>расстроилась</td>
+      <td>0.051342</td>
+    </tr>
+    <tr>
+      <th>1354</th>
+      <td>144</td>
+      <td>1</td>
+      <td>Первое слово</td>
+      <td>от</td>
+      <td>0.001596</td>
+    </tr>
+    <tr>
+      <th>1355</th>
+      <td>144</td>
+      <td>2</td>
+      <td>От</td>
+      <td>внимания</td>
+      <td>0.000231</td>
+    </tr>
+    <tr>
+      <th>1356</th>
+      <td>144</td>
+      <td>3</td>
+      <td>От внимания</td>
+      <td>наблюдателя</td>
+      <td>0.000024</td>
+    </tr>
+    <tr>
+      <th>1357</th>
+      <td>144</td>
+      <td>4</td>
+      <td>От внимания наблюдателя</td>
+      <td>не</td>
+      <td>0.042131</td>
+    </tr>
+    <tr>
+      <th>1358</th>
+      <td>144</td>
+      <td>5</td>
+      <td>От внимания наблюдателя не</td>
+      <td>должна</td>
+      <td>0.000957</td>
+    </tr>
+    <tr>
+      <th>1359</th>
+      <td>144</td>
+      <td>6</td>
+      <td>От внимания наблюдателя не должна</td>
+      <td>ускользать</td>
+      <td>0.000054</td>
+    </tr>
+    <tr>
+      <th>1360</th>
+      <td>144</td>
+      <td>7</td>
+      <td>От внимания наблюдателя не должна ускользать</td>
+      <td>даже</td>
+      <td>0.009129</td>
+    </tr>
+    <tr>
+      <th>1361</th>
+      <td>144</td>
+      <td>8</td>
+      <td>От внимания наблюдателя не должна ускользать даже</td>
+      <td>малейшая</td>
+      <td>0.005202</td>
+    </tr>
+    <tr>
+      <th>1362</th>
+      <td>144</td>
+      <td>9</td>
+      <td>От внимания наблюдателя не должна ускользать д...</td>
+      <td>деталь</td>
+      <td>0.148185</td>
+    </tr>
+  </tbody>
+</table>
+<p>1363 rows × 5 columns</p>
+</div>
+
+
+
+
+```python
+data_result
 ```
 
 
@@ -931,5 +1598,109 @@ data
 
 
 ```python
-data_result
+measure = data_result[data_result.prob_by_model<data_result.prob_by_human].shape[0]/data_result.shape[0]
+print("{}% of data, where prob of cloze task is greater than prob of lstm ".format(round(measure,2)))
+```
+
+    0.84% of data, where prob of cloze task is greater than prob of lstm 
+
+
+
+```python
+data_result['Cross_entropy'] = -(0.0*np.log(data_result.prob_by_model)+1.0*np.log(data_result.prob_by_human))
+```
+
+    /home/semen/anaconda3/lib/python3.7/site-packages/ipykernel_launcher.py:1: RuntimeWarning: divide by zero encountered in log
+      """Entry point for launching an IPython kernel.
+
+
+
+```python
+data_result.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>shown</th>
+      <th>answer</th>
+      <th>prob_by_model</th>
+      <th>prob_by_human</th>
+      <th>R^2</th>
+      <th>Cross_entropy</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>На болотах оставался</td>
+      <td>еще</td>
+      <td>0.124899</td>
+      <td>0.029412</td>
+      <td>0.009118</td>
+      <td>3.526361</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>На болотах оставался ещё лёд‚</td>
+      <td>но</td>
+      <td>0.039917</td>
+      <td>0.362963</td>
+      <td>0.104359</td>
+      <td>1.013454</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>На болотах оставался ещё лёд‚ но</td>
+      <td>на</td>
+      <td>0.031502</td>
+      <td>0.043796</td>
+      <td>0.000151</td>
+      <td>3.128221</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>На болотах оставался ещё лёд‚ но на</td>
+      <td>берегах</td>
+      <td>0.003701</td>
+      <td>0.007299</td>
+      <td>0.000013</td>
+      <td>4.919981</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>На болотах оставался ещё лёд‚ но на берегах</td>
+      <td>реки</td>
+      <td>0.014212</td>
+      <td>0.080882</td>
+      <td>0.004445</td>
+      <td>2.514760</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+
 ```
