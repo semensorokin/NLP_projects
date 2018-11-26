@@ -309,7 +309,7 @@ def normal(x):
 gg['index_norm'] = gg.sum_fr
 gg.index_norm = gg.index_norm.apply(normal)
 print(gg.head())
-gg['prob'] = np.where(gg.accuracy_x==1., (gg.all_fr*gg.index_norm)/(gg.index_norm*gg.sum_fr), 0)
+gg['prob'] = np.where(gg.accuracy_x==1., (gg.all_fr*gg.index_norm)/(gg.index_norm*gg.sum_fr), 0.0000000000000000001)
 res = gg[['shown', 'accuracy_x','sum_fr','prob']]
 res = res[res.prob!=0.]
 print(res.shape)
@@ -328,18 +328,93 @@ print(res.head())
     2   Start_10         1.0       1      71         1.0    9.873239
     3  Start_100         0.0      16      16         0.0   43.812500
     4  Start_101         0.0      16      16         0.0   43.812500
-    (679, 4)
-            shown  accuracy_x  sum_fr      prob
-    2    Start_10         1.0      71  0.014085
-    8   Start_104         1.0      16  0.125000
-    15  Start_110         1.0     151  0.006623
-    19  Start_113         1.0     112  0.026786
-    21  Start_114         1.0      93  0.032258
+    (1978, 4)
+           shown  accuracy_x  sum_fr          prob
+    0    Start_1         0.0     138  1.000000e-19
+    1   Start_10         0.0      71  1.000000e-19
+    2   Start_10         1.0      71  1.408451e-02
+    3  Start_100         0.0      16  1.000000e-19
+    4  Start_101         0.0      16  1.000000e-19
 
 
 
 ```python
-res[res.prob>=1.]
+r = res[['shown','accuracy_x', 'prob']].groupby(['shown']).sum()
+r = r.reset_index(level=['shown'])
+print(r.shape)
+#r.sum_fr = np.where(r.shown==res.shown, res.sum_fr, 0)
+r.head()
+```
+
+    (1309, 3)
+
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>shown</th>
+      <th>accuracy_x</th>
+      <th>prob</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Start_1</td>
+      <td>0.0</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Start_10</td>
+      <td>1.0</td>
+      <td>1.408451e-02</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Start_100</td>
+      <td>0.0</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Start_101</td>
+      <td>0.0</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Start_102</td>
+      <td>0.0</td>
+      <td>1.000000e-19</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+r[r.prob>=1.]
 ```
 
 
@@ -365,79 +440,68 @@ res[res.prob>=1.]
       <th></th>
       <th>shown</th>
       <th>accuracy_x</th>
-      <th>sum_fr</th>
       <th>prob</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>311</th>
+      <th>233</th>
       <td>В современном обществе семья и школа оказывают...</td>
       <td>1.0</td>
-      <td>17</td>
       <td>1.0</td>
     </tr>
     <tr>
-      <th>421</th>
+      <th>305</th>
       <td>Во избежание ожогов надо нанести на лицо небол...</td>
       <td>1.0</td>
-      <td>15</td>
       <td>1.0</td>
     </tr>
     <tr>
-      <th>424</th>
+      <th>307</th>
       <td>Во избежание ожогов надо нанести на лицо небол...</td>
       <td>1.0</td>
-      <td>15</td>
       <td>1.0</td>
     </tr>
     <tr>
-      <th>548</th>
+      <th>389</th>
       <td>Дрозды и скворцы начали вить семейные гнёзда н...</td>
       <td>1.0</td>
-      <td>15</td>
       <td>1.0</td>
     </tr>
     <tr>
-      <th>738</th>
+      <th>511</th>
       <td>Зачем ему звонить‚ если откликается спокойный ...</td>
       <td>1.0</td>
-      <td>17</td>
       <td>1.0</td>
     </tr>
     <tr>
-      <th>795</th>
+      <th>550</th>
       <td>Ирине досталась отдельная комната в двухкомнатной</td>
       <td>1.0</td>
-      <td>16</td>
       <td>1.0</td>
     </tr>
     <tr>
-      <th>815</th>
+      <th>565</th>
       <td>Какие главные лекарства должны входить</td>
       <td>1.0</td>
-      <td>63</td>
       <td>1.0</td>
     </tr>
     <tr>
-      <th>1184</th>
+      <th>802</th>
       <td>Олень бродил среди берёз‚ жевал талый снег</td>
       <td>1.0</td>
-      <td>15</td>
       <td>1.0</td>
     </tr>
     <tr>
-      <th>1525</th>
+      <th>1022</th>
       <td>С нескрываемой едкой иронией отзываются они др...</td>
       <td>1.0</td>
-      <td>15</td>
       <td>1.0</td>
     </tr>
     <tr>
-      <th>1552</th>
+      <th>1040</th>
       <td>Собаку‚ виновницу случившегося‚ приказали сечь...</td>
       <td>1.0</td>
-      <td>15</td>
       <td>1.0</td>
     </tr>
   </tbody>
@@ -449,7 +513,6 @@ res[res.prob>=1.]
 
 ```python
 data.shown.unique().shape
-
 ```
 
 
@@ -502,7 +565,7 @@ data.shown.unique().shape
 
 
 ```python
-data_m =  data.merge(res, left_on='shown', right_on='shown', how='outer')
+data_m = data.merge(r, left_on='shown', right_on='shown', how='outer')
 ```
 
 
@@ -513,22 +576,494 @@ data_m.shown.unique().shape
 
 
 
-    (1206,)
+    (1310,)
 
 
 
 
 ```python
-data_m = data_m.dropna()
+#data_m = data_m.dropna()
 result = data_m[['shown', 'answer', 'prob_x', 'prob_y']]
+result[result.prob_y<0.0001]
 ```
 
 
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>shown</th>
+      <th>answer</th>
+      <th>prob_x</th>
+      <th>prob_y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Start_102</td>
+      <td>на</td>
+      <td>1.650273e-02</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Start_102</td>
+      <td>он</td>
+      <td>1.442693e-02</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Start_102</td>
+      <td>ваня</td>
+      <td>3.091045e-05</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Start_102</td>
+      <td>сделав</td>
+      <td>3.943548e-05</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Start_102</td>
+      <td>я</td>
+      <td>1.338693e-02</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Start_102</td>
+      <td>дорога</td>
+      <td>6.815995e-05</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Start_102</td>
+      <td>не</td>
+      <td>7.830556e-03</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Start_102</td>
+      <td>выходя</td>
+      <td>3.651174e-05</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Start_102</td>
+      <td>и</td>
+      <td>3.465874e-02</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Start_102</td>
+      <td>у</td>
+      <td>5.279777e-03</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Start_102</td>
+      <td>очень</td>
+      <td>7.828477e-04</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Start_102</td>
+      <td>на</td>
+      <td>1.650273e-02</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>Start_102</td>
+      <td>наживка</td>
+      <td>6.170017e-07</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>Start_102</td>
+      <td>мне</td>
+      <td>1.859887e-03</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>Start_102</td>
+      <td>город</td>
+      <td>1.382068e-04</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>Start_102</td>
+      <td>в</td>
+      <td>6.357282e-02</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>Start_102</td>
+      <td>здесь</td>
+      <td>1.354696e-03</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>Start_102</td>
+      <td>у</td>
+      <td>5.279777e-03</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>На</td>
+      <td>болотах</td>
+      <td>6.423551e-06</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>На</td>
+      <td>привале</td>
+      <td>4.040287e-05</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>На</td>
+      <td>газовой</td>
+      <td>2.183123e-05</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>На</td>
+      <td>узкой</td>
+      <td>4.291669e-05</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>На</td>
+      <td>ольгу</td>
+      <td>1.001641e-05</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>На</td>
+      <td>массаже</td>
+      <td>1.357266e-06</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>На</td>
+      <td>запись</td>
+      <td>2.346074e-05</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>На</td>
+      <td>вторичном</td>
+      <td>2.160513e-05</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>На болотах</td>
+      <td>оставался</td>
+      <td>1.375087e-04</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>На болотах оставался ещё</td>
+      <td>лед</td>
+      <td>2.192784e-03</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>На болотах оставался ещё лёд‚ но на берегах реки</td>
+      <td>появилась</td>
+      <td>6.698859e-04</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>Он ловко</td>
+      <td>поддел</td>
+      <td>4.475961e-03</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1453</th>
+      <td>Start_63</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1454</th>
+      <td>Start_64</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1455</th>
+      <td>Start_65</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1456</th>
+      <td>Start_66</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1458</th>
+      <td>Start_68</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1459</th>
+      <td>Start_69</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1460</th>
+      <td>Start_7</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1461</th>
+      <td>Start_70</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1462</th>
+      <td>Start_71</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1463</th>
+      <td>Start_73</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1464</th>
+      <td>Start_74</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1466</th>
+      <td>Start_76</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1468</th>
+      <td>Start_8</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1469</th>
+      <td>Start_81</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1470</th>
+      <td>Start_82</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1471</th>
+      <td>Start_83</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1472</th>
+      <td>Start_84</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1474</th>
+      <td>Start_86</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1475</th>
+      <td>Start_87</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1476</th>
+      <td>Start_88</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1477</th>
+      <td>Start_89</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1478</th>
+      <td>Start_9</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1479</th>
+      <td>Start_90</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1480</th>
+      <td>Start_91</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1482</th>
+      <td>Start_94</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1483</th>
+      <td>Start_95</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1484</th>
+      <td>Start_96</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1485</th>
+      <td>Start_97</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1486</th>
+      <td>Start_98</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+    <tr>
+      <th>1487</th>
+      <td>Start_99</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000e-19</td>
+    </tr>
+  </tbody>
+</table>
+<p>724 rows × 4 columns</p>
+</div>
+
+
+
+
 ```python
-check = data_cloze[data_cloze.accuracy==1.][['shown', 'answer']]
+#print(check.shape)
+check = data_cloze[['shown', 'answer']]
 check = check.drop_duplicates()
 data_result =  result.merge(check, left_on='shown', right_on='shown', how='outer')
+data_result.shape
 ```
+
+
+
+
+    (38346, 5)
+
+
 
 
 ```python
@@ -539,7 +1074,7 @@ data_result = data_result[['shown','answer_x','prob_x','prob_y']]
 
 ```python
 data_result.columns = ['shown', 'answer', 'prob_by_model', 'prob_by_human']
-data_result['R^2'] = (data_result.prob_by_human-data_result.prob_by_model)**2
+data_result['$R^2$'] = (data_result.prob_by_human-data_result.prob_by_model)**2
 data
 ```
 
@@ -1069,7 +1604,7 @@ data
 
 
 ```python
-data_result
+data_result[data_result.prob_by_human<0.0001]
 ```
 
 
@@ -1097,501 +1632,228 @@ data_result
       <th>answer</th>
       <th>prob_by_model</th>
       <th>prob_by_human</th>
-      <th>R^2</th>
+      <th>$R^2$</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
-      <td>На болотах оставался</td>
-      <td>еще</td>
-      <td>0.124899</td>
-      <td>0.029412</td>
-      <td>9.117721e-03</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>На болотах оставался ещё лёд‚</td>
-      <td>но</td>
-      <td>0.039917</td>
-      <td>0.362963</td>
-      <td>1.043589e-01</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>На болотах оставался ещё лёд‚ но</td>
-      <td>на</td>
-      <td>0.031502</td>
-      <td>0.043796</td>
-      <td>1.511303e-04</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>На болотах оставался ещё лёд‚ но на</td>
-      <td>берегах</td>
-      <td>0.003701</td>
-      <td>0.007299</td>
-      <td>1.294580e-05</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>На болотах оставался ещё лёд‚ но на берегах</td>
-      <td>реки</td>
-      <td>0.014212</td>
-      <td>0.080882</td>
-      <td>4.444963e-03</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>На болотах оставался ещё лёд‚ но на берегах ре...</td>
-      <td>трава</td>
-      <td>0.003874</td>
-      <td>0.192593</td>
-      <td>3.561461e-02</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>Он</td>
-      <td>был</td>
-      <td>0.048258</td>
-      <td>0.006711</td>
-      <td>1.726100e-03</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>Он ловко поддел концом</td>
-      <td>ножа</td>
-      <td>0.045508</td>
-      <td>0.102941</td>
-      <td>3.298552e-03</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>Он ловко поддел концом ножа замочки‚</td>
-      <td>и</td>
-      <td>0.051944</td>
-      <td>0.355556</td>
-      <td>9.217985e-02</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>Он ловко поддел концом ножа замочки‚ и</td>
-      <td>они</td>
-      <td>0.072151</td>
-      <td>0.187970</td>
-      <td>1.341391e-02</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>Он ловко поддел концом ножа замочки‚ и они</td>
-      <td>отскочили</td>
-      <td>0.002742</td>
-      <td>0.014706</td>
-      <td>1.431301e-04</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>Ваня раскрыл было</td>
-      <td>рот</td>
-      <td>0.467625</td>
-      <td>0.225225</td>
-      <td>5.875769e-02</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>Ваня раскрыл было рот‚</td>
-      <td>но</td>
-      <td>0.661029</td>
-      <td>0.790909</td>
-      <td>1.686880e-02</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>Ваня раскрыл было рот‚ но</td>
-      <td>понял</td>
-      <td>0.004546</td>
-      <td>0.018349</td>
-      <td>1.905118e-04</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>Ваня раскрыл было рот‚ но понял‚</td>
-      <td>что</td>
-      <td>0.958914</td>
-      <td>0.962963</td>
-      <td>1.639039e-05</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>Ваня раскрыл было рот‚ но понял‚ что что-то</td>
-      <td>не</td>
-      <td>0.241922</td>
-      <td>0.523364</td>
-      <td>7.921003e-02</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>Ваня раскрыл было рот‚ но понял‚ что что-то не</td>
-      <td>так</td>
-      <td>0.575578</td>
-      <td>0.761468</td>
-      <td>3.455488e-02</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>Ваня раскрыл было рот‚ но понял‚ что что-то не...</td>
-      <td>и</td>
-      <td>0.452314</td>
-      <td>0.528302</td>
-      <td>5.774183e-03</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>Ваня раскрыл было рот‚ но понял‚ что что-то не...</td>
-      <td>промолчал</td>
-      <td>0.000886</td>
-      <td>0.125000</td>
-      <td>1.540423e-02</td>
-    </tr>
-    <tr>
       <th>24</th>
-      <td>Сделав мне</td>
-      <td>знак</td>
-      <td>0.002992</td>
-      <td>0.010309</td>
-      <td>5.354131e-05</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>Сделав мне знак помолчать‚</td>
+      <td>Start_102</td>
       <td>он</td>
-      <td>0.164170</td>
-      <td>0.729167</td>
-      <td>3.192215e-01</td>
+      <td>0.014427</td>
+      <td>1.000000e-19</td>
+      <td>2.081363e-04</td>
     </tr>
     <tr>
-      <th>26</th>
-      <td>Сделав мне знак помолчать‚ он</td>
-      <td>приложил</td>
-      <td>0.000852</td>
-      <td>0.010417</td>
-      <td>9.148500e-05</td>
+      <th>79</th>
+      <td>Start_102</td>
+      <td>я</td>
+      <td>0.013387</td>
+      <td>1.000000e-19</td>
+      <td>1.792099e-04</td>
     </tr>
     <tr>
-      <th>27</th>
-      <td>Сделав мне знак помолчать‚ он приложил</td>
-      <td>ухо</td>
-      <td>0.115581</td>
-      <td>0.085106</td>
-      <td>9.287244e-04</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>Сделав мне знак помолчать‚ он приложил ухо</td>
-      <td>к</td>
-      <td>0.826187</td>
-      <td>0.905263</td>
-      <td>6.253093e-03</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>Сделав мне знак помолчать‚ он приложил ухо к</td>
-      <td>двери</td>
-      <td>0.015418</td>
-      <td>0.484211</td>
-      <td>2.197665e-01</td>
-    </tr>
-    <tr>
-      <th>34</th>
-      <td>Я</td>
-      <td>люблю</td>
-      <td>0.003210</td>
-      <td>0.008734</td>
-      <td>3.051129e-05</td>
-    </tr>
-    <tr>
-      <th>35</th>
-      <td>Я сделала</td>
-      <td>шаг</td>
-      <td>0.023332</td>
-      <td>0.056818</td>
-      <td>1.121335e-03</td>
-    </tr>
-    <tr>
-      <th>36</th>
-      <td>Я сделала шаг</td>
-      <td>навстречу</td>
-      <td>0.042140</td>
-      <td>0.177778</td>
-      <td>1.839768e-02</td>
-    </tr>
-    <tr>
-      <th>37</th>
-      <td>Я сделала шаг навстречу: приехала</td>
-      <td>к</td>
-      <td>0.092345</td>
-      <td>0.303371</td>
-      <td>4.453180e-02</td>
-    </tr>
-    <tr>
-      <th>38</th>
-      <td>Я сделала шаг навстречу: приехала к ней‚</td>
-      <td>попросив</td>
-      <td>0.000050</td>
-      <td>0.011364</td>
-      <td>1.279971e-04</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>733</th>
-      <td>Считается‚ что коллекционирование раритетных м...</td>
-      <td>шоу-бизнеса</td>
-      <td>0.089278</td>
-      <td>0.066667</td>
-      <td>5.112773e-04</td>
-    </tr>
-    <tr>
-      <th>734</th>
-      <td>Торговля продуктами</td>
-      <td>питания</td>
-      <td>0.163265</td>
-      <td>0.230769</td>
-      <td>4.556833e-03</td>
-    </tr>
-    <tr>
-      <th>735</th>
-      <td>Торговля продуктами питания</td>
-      <td>является</td>
-      <td>0.004347</td>
-      <td>0.083333</td>
-      <td>6.238855e-03</td>
-    </tr>
-    <tr>
-      <th>736</th>
-      <td>Торговля продуктами питания является</td>
-      <td>одной</td>
-      <td>0.077346</td>
-      <td>0.076923</td>
-      <td>1.787859e-07</td>
-    </tr>
-    <tr>
-      <th>737</th>
-      <td>Торговля продуктами питания является одной</td>
-      <td>из</td>
-      <td>0.995638</td>
-      <td>0.933333</td>
-      <td>3.881836e-03</td>
-    </tr>
-    <tr>
-      <th>738</th>
-      <td>Торговля продуктами питания является одной из</td>
-      <td>самых</td>
-      <td>0.292348</td>
-      <td>0.285714</td>
-      <td>4.400613e-05</td>
-    </tr>
-    <tr>
-      <th>739</th>
-      <td>Торговля продуктами питания является одной из ...</td>
-      <td>прибыльных</td>
-      <td>0.017299</td>
-      <td>0.285714</td>
-      <td>7.204701e-02</td>
-    </tr>
-    <tr>
-      <th>740</th>
-      <td>Торговля продуктами питания является одной из ...</td>
-      <td>отраслей</td>
-      <td>0.305058</td>
-      <td>0.333333</td>
-      <td>7.994775e-04</td>
-    </tr>
-    <tr>
-      <th>741</th>
-      <td>Торговля продуктами питания является одной из ...</td>
-      <td>в</td>
-      <td>0.100149</td>
-      <td>0.076923</td>
-      <td>5.394517e-04</td>
-    </tr>
-    <tr>
-      <th>743</th>
-      <td>Клиенты воровали</td>
-      <td>из</td>
-      <td>0.028697</td>
-      <td>0.083333</td>
-      <td>2.985102e-03</td>
-    </tr>
-    <tr>
-      <th>744</th>
-      <td>Один футболист‚ который получил растяжение‚</td>
+      <th>101</th>
+      <td>Start_102</td>
       <td>не</td>
-      <td>0.035322</td>
-      <td>0.333333</td>
-      <td>8.881070e-02</td>
+      <td>0.007831</td>
+      <td>1.000000e-19</td>
+      <td>6.131761e-05</td>
     </tr>
     <tr>
-      <th>745</th>
-      <td>Один футболист‚ который получил растяжение‚ не...</td>
+      <th>226</th>
+      <td>Start_102</td>
+      <td>город</td>
+      <td>0.000138</td>
+      <td>1.000000e-19</td>
+      <td>1.910112e-08</td>
+    </tr>
+    <tr>
+      <th>241</th>
+      <td>Start_102</td>
       <td>в</td>
-      <td>0.095617</td>
-      <td>0.928571</td>
-      <td>6.938137e-01</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
     </tr>
     <tr>
-      <th>746</th>
-      <td>Один футболист‚ который получил растяжение‚ не...</td>
-      <td>игре</td>
-      <td>0.015405</td>
-      <td>0.357143</td>
-      <td>1.167845e-01</td>
+      <th>10456</th>
+      <td>Start_50</td>
+      <td>однако</td>
+      <td>0.006184</td>
+      <td>1.000000e-19</td>
+      <td>3.823848e-05</td>
     </tr>
     <tr>
-      <th>747</th>
-      <td>Наши власти позволяют</td>
-      <td>себе</td>
-      <td>0.215054</td>
-      <td>0.307692</td>
-      <td>8.581789e-03</td>
+      <th>10573</th>
+      <td>Start_50</td>
+      <td>он</td>
+      <td>0.014427</td>
+      <td>1.000000e-19</td>
+      <td>2.081363e-04</td>
     </tr>
     <tr>
-      <th>748</th>
-      <td>Наши власти позволяют себе излишества‚ создава...</td>
-      <td>общества</td>
-      <td>0.001888</td>
-      <td>0.230769</td>
-      <td>5.238640e-02</td>
+      <th>11037</th>
+      <td>Start_50</td>
+      <td>он</td>
+      <td>0.014427</td>
+      <td>1.000000e-19</td>
+      <td>2.081363e-04</td>
     </tr>
     <tr>
-      <th>749</th>
-      <td>Ненужный коврик из твёрдой</td>
-      <td>пластмассы</td>
-      <td>0.010510</td>
-      <td>0.083333</td>
-      <td>5.303263e-03</td>
+      <th>11165</th>
+      <td>Start_50</td>
+      <td>у</td>
+      <td>0.005280</td>
+      <td>1.000000e-19</td>
+      <td>2.787604e-05</td>
     </tr>
     <tr>
-      <th>750</th>
-      <td>Ненужный коврик из твёрдой пластмассы пригодит...</td>
-      <td>подставка</td>
-      <td>0.000019</td>
-      <td>0.333333</td>
-      <td>1.110982e-01</td>
+      <th>11629</th>
+      <td>Start_50</td>
+      <td>у</td>
+      <td>0.005280</td>
+      <td>1.000000e-19</td>
+      <td>2.787604e-05</td>
     </tr>
     <tr>
-      <th>751</th>
-      <td>Ненужный коврик из твёрдой пластмассы пригодит...</td>
-      <td>для</td>
-      <td>0.512068</td>
-      <td>0.571429</td>
-      <td>3.523681e-03</td>
+      <th>11715</th>
+      <td>Start_50</td>
+      <td>за</td>
+      <td>0.004480</td>
+      <td>1.000000e-19</td>
+      <td>2.006795e-05</td>
     </tr>
     <tr>
-      <th>752</th>
-      <td>Ненужный коврик из твёрдой пластмассы пригодит...</td>
-      <td>посуды</td>
-      <td>0.008749</td>
-      <td>0.083333</td>
-      <td>5.562781e-03</td>
+      <th>11959</th>
+      <td>Start_50</td>
+      <td>на</td>
+      <td>0.016503</td>
+      <td>1.000000e-19</td>
+      <td>2.723400e-04</td>
     </tr>
     <tr>
-      <th>753</th>
-      <td>Когда родители пригрозили не взять её</td>
-      <td>с</td>
-      <td>0.098012</td>
-      <td>0.538462</td>
-      <td>1.939961e-01</td>
+      <th>12075</th>
+      <td>Start_50</td>
+      <td>на</td>
+      <td>0.016503</td>
+      <td>1.000000e-19</td>
+      <td>2.723400e-04</td>
     </tr>
     <tr>
-      <th>754</th>
-      <td>Когда родители пригрозили не взять её с</td>
-      <td>собой</td>
-      <td>0.859795</td>
-      <td>0.846154</td>
-      <td>1.860755e-04</td>
+      <th>12163</th>
+      <td>Start_50</td>
+      <td>в</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
     </tr>
     <tr>
-      <th>755</th>
-      <td>Когда родители пригрозили не взять её с собой‚</td>
-      <td>маша</td>
-      <td>0.000831</td>
-      <td>0.083333</td>
-      <td>6.806588e-03</td>
+      <th>12221</th>
+      <td>Start_50</td>
+      <td>в</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
     </tr>
     <tr>
-      <th>756</th>
-      <td>Когда родители пригрозили не взять её с собой‚...</td>
-      <td>расстроилась</td>
-      <td>0.051342</td>
-      <td>0.461538</td>
-      <td>1.682608e-01</td>
+      <th>12337</th>
+      <td>Start_50</td>
+      <td>в</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
     </tr>
     <tr>
-      <th>757</th>
-      <td>От внимания</td>
-      <td>наблюдателя</td>
-      <td>0.000024</td>
-      <td>0.019608</td>
-      <td>3.835426e-04</td>
+      <th>12511</th>
+      <td>Start_50</td>
+      <td>в</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
     </tr>
     <tr>
-      <th>758</th>
-      <td>От внимания наблюдателя</td>
-      <td>не</td>
-      <td>0.042131</td>
-      <td>0.058824</td>
-      <td>2.786424e-04</td>
+      <th>12713</th>
+      <td>Start_50</td>
+      <td>на</td>
+      <td>0.016503</td>
+      <td>1.000000e-19</td>
+      <td>2.723400e-04</td>
     </tr>
     <tr>
-      <th>759</th>
-      <td>От внимания наблюдателя не</td>
-      <td>должна</td>
-      <td>0.000957</td>
-      <td>0.020000</td>
-      <td>3.626235e-04</td>
+      <th>12832</th>
+      <td>Start_50</td>
+      <td>но</td>
+      <td>0.029389</td>
+      <td>1.000000e-19</td>
+      <td>8.637302e-04</td>
     </tr>
     <tr>
-      <th>760</th>
-      <td>От внимания наблюдателя не должна</td>
-      <td>ускользать</td>
-      <td>0.000054</td>
-      <td>0.040000</td>
-      <td>1.595655e-03</td>
+      <th>13003</th>
+      <td>Start_50</td>
+      <td>на</td>
+      <td>0.016503</td>
+      <td>1.000000e-19</td>
+      <td>2.723400e-04</td>
     </tr>
     <tr>
-      <th>761</th>
-      <td>От внимания наблюдателя не должна ускользать</td>
-      <td>даже</td>
-      <td>0.009129</td>
-      <td>0.039216</td>
-      <td>9.052350e-04</td>
+      <th>13366</th>
+      <td>Start_50</td>
+      <td>там</td>
+      <td>0.001764</td>
+      <td>1.000000e-19</td>
+      <td>3.110466e-06</td>
     </tr>
     <tr>
-      <th>762</th>
-      <td>От внимания наблюдателя не должна ускользать даже</td>
-      <td>малейшая</td>
-      <td>0.005202</td>
-      <td>0.215686</td>
-      <td>4.430383e-02</td>
+      <th>13485</th>
+      <td>Start_50</td>
+      <td>у</td>
+      <td>0.005280</td>
+      <td>1.000000e-19</td>
+      <td>2.787604e-05</td>
     </tr>
     <tr>
-      <th>763</th>
-      <td>От внимания наблюдателя не должна ускользать д...</td>
-      <td>деталь</td>
-      <td>0.148185</td>
-      <td>0.711538</td>
-      <td>3.173669e-01</td>
+      <th>13531</th>
+      <td>Start_50</td>
+      <td>он</td>
+      <td>0.014427</td>
+      <td>1.000000e-19</td>
+      <td>2.081363e-04</td>
+    </tr>
+    <tr>
+      <th>13555</th>
+      <td>Start_50</td>
+      <td>в</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
+    </tr>
+    <tr>
+      <th>24144</th>
+      <td>Start_16</td>
+      <td>на</td>
+      <td>0.016503</td>
+      <td>1.000000e-19</td>
+      <td>2.723400e-04</td>
+    </tr>
+    <tr>
+      <th>24376</th>
+      <td>Start_16</td>
+      <td>на</td>
+      <td>0.016503</td>
+      <td>1.000000e-19</td>
+      <td>2.723400e-04</td>
+    </tr>
+    <tr>
+      <th>26235</th>
+      <td>Start_131</td>
+      <td>я</td>
+      <td>0.013387</td>
+      <td>1.000000e-19</td>
+      <td>1.792099e-04</td>
     </tr>
   </tbody>
 </table>
-<p>660 rows × 5 columns</p>
 </div>
 
 
@@ -1602,7 +1864,7 @@ measure = data_result[data_result.prob_by_model<data_result.prob_by_human].shape
 print("{}% of data, where prob of cloze task is greater than prob of lstm ".format(round(measure,2)))
 ```
 
-    0.84% of data, where prob of cloze task is greater than prob of lstm 
+    0.81% of data, where prob of cloze task is greater than prob of lstm 
 
 
 
@@ -1644,55 +1906,339 @@ data_result.head()
       <th>answer</th>
       <th>prob_by_model</th>
       <th>prob_by_human</th>
-      <th>R^2</th>
+      <th>$R^2$</th>
       <th>Cross_entropy</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
-      <td>На болотах оставался</td>
-      <td>еще</td>
-      <td>0.124899</td>
-      <td>0.029412</td>
-      <td>0.009118</td>
-      <td>3.526361</td>
+      <th>24</th>
+      <td>Start_102</td>
+      <td>он</td>
+      <td>0.014427</td>
+      <td>1.000000e-19</td>
+      <td>2.081363e-04</td>
+      <td>43.749117</td>
     </tr>
     <tr>
-      <th>1</th>
-      <td>На болотах оставался ещё лёд‚</td>
-      <td>но</td>
-      <td>0.039917</td>
-      <td>0.362963</td>
-      <td>0.104359</td>
-      <td>1.013454</td>
+      <th>79</th>
+      <td>Start_102</td>
+      <td>я</td>
+      <td>0.013387</td>
+      <td>1.000000e-19</td>
+      <td>1.792099e-04</td>
+      <td>43.749117</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>На болотах оставался ещё лёд‚ но</td>
+      <th>101</th>
+      <td>Start_102</td>
+      <td>не</td>
+      <td>0.007831</td>
+      <td>1.000000e-19</td>
+      <td>6.131761e-05</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>226</th>
+      <td>Start_102</td>
+      <td>город</td>
+      <td>0.000138</td>
+      <td>1.000000e-19</td>
+      <td>1.910112e-08</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>241</th>
+      <td>Start_102</td>
+      <td>в</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
+      <td>43.749117</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+data_result[data_result.prob_by_human<0.00000000001]
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>shown</th>
+      <th>answer</th>
+      <th>prob_by_model</th>
+      <th>prob_by_human</th>
+      <th>$R^2$</th>
+      <th>Cross_entropy</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>24</th>
+      <td>Start_102</td>
+      <td>он</td>
+      <td>0.014427</td>
+      <td>1.000000e-19</td>
+      <td>2.081363e-04</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>79</th>
+      <td>Start_102</td>
+      <td>я</td>
+      <td>0.013387</td>
+      <td>1.000000e-19</td>
+      <td>1.792099e-04</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>101</th>
+      <td>Start_102</td>
+      <td>не</td>
+      <td>0.007831</td>
+      <td>1.000000e-19</td>
+      <td>6.131761e-05</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>226</th>
+      <td>Start_102</td>
+      <td>город</td>
+      <td>0.000138</td>
+      <td>1.000000e-19</td>
+      <td>1.910112e-08</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>241</th>
+      <td>Start_102</td>
+      <td>в</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>10456</th>
+      <td>Start_50</td>
+      <td>однако</td>
+      <td>0.006184</td>
+      <td>1.000000e-19</td>
+      <td>3.823848e-05</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>10573</th>
+      <td>Start_50</td>
+      <td>он</td>
+      <td>0.014427</td>
+      <td>1.000000e-19</td>
+      <td>2.081363e-04</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>11037</th>
+      <td>Start_50</td>
+      <td>он</td>
+      <td>0.014427</td>
+      <td>1.000000e-19</td>
+      <td>2.081363e-04</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>11165</th>
+      <td>Start_50</td>
+      <td>у</td>
+      <td>0.005280</td>
+      <td>1.000000e-19</td>
+      <td>2.787604e-05</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>11629</th>
+      <td>Start_50</td>
+      <td>у</td>
+      <td>0.005280</td>
+      <td>1.000000e-19</td>
+      <td>2.787604e-05</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>11715</th>
+      <td>Start_50</td>
+      <td>за</td>
+      <td>0.004480</td>
+      <td>1.000000e-19</td>
+      <td>2.006795e-05</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>11959</th>
+      <td>Start_50</td>
       <td>на</td>
-      <td>0.031502</td>
-      <td>0.043796</td>
-      <td>0.000151</td>
-      <td>3.128221</td>
+      <td>0.016503</td>
+      <td>1.000000e-19</td>
+      <td>2.723400e-04</td>
+      <td>43.749117</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>На болотах оставался ещё лёд‚ но на</td>
-      <td>берегах</td>
-      <td>0.003701</td>
-      <td>0.007299</td>
-      <td>0.000013</td>
-      <td>4.919981</td>
+      <th>12075</th>
+      <td>Start_50</td>
+      <td>на</td>
+      <td>0.016503</td>
+      <td>1.000000e-19</td>
+      <td>2.723400e-04</td>
+      <td>43.749117</td>
     </tr>
     <tr>
-      <th>4</th>
-      <td>На болотах оставался ещё лёд‚ но на берегах</td>
-      <td>реки</td>
-      <td>0.014212</td>
-      <td>0.080882</td>
-      <td>0.004445</td>
-      <td>2.514760</td>
+      <th>12163</th>
+      <td>Start_50</td>
+      <td>в</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>12221</th>
+      <td>Start_50</td>
+      <td>в</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>12337</th>
+      <td>Start_50</td>
+      <td>в</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>12511</th>
+      <td>Start_50</td>
+      <td>в</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>12713</th>
+      <td>Start_50</td>
+      <td>на</td>
+      <td>0.016503</td>
+      <td>1.000000e-19</td>
+      <td>2.723400e-04</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>12832</th>
+      <td>Start_50</td>
+      <td>но</td>
+      <td>0.029389</td>
+      <td>1.000000e-19</td>
+      <td>8.637302e-04</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>13003</th>
+      <td>Start_50</td>
+      <td>на</td>
+      <td>0.016503</td>
+      <td>1.000000e-19</td>
+      <td>2.723400e-04</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>13366</th>
+      <td>Start_50</td>
+      <td>там</td>
+      <td>0.001764</td>
+      <td>1.000000e-19</td>
+      <td>3.110466e-06</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>13485</th>
+      <td>Start_50</td>
+      <td>у</td>
+      <td>0.005280</td>
+      <td>1.000000e-19</td>
+      <td>2.787604e-05</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>13531</th>
+      <td>Start_50</td>
+      <td>он</td>
+      <td>0.014427</td>
+      <td>1.000000e-19</td>
+      <td>2.081363e-04</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>13555</th>
+      <td>Start_50</td>
+      <td>в</td>
+      <td>0.063573</td>
+      <td>1.000000e-19</td>
+      <td>4.041504e-03</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>24144</th>
+      <td>Start_16</td>
+      <td>на</td>
+      <td>0.016503</td>
+      <td>1.000000e-19</td>
+      <td>2.723400e-04</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>24376</th>
+      <td>Start_16</td>
+      <td>на</td>
+      <td>0.016503</td>
+      <td>1.000000e-19</td>
+      <td>2.723400e-04</td>
+      <td>43.749117</td>
+    </tr>
+    <tr>
+      <th>26235</th>
+      <td>Start_131</td>
+      <td>я</td>
+      <td>0.013387</td>
+      <td>1.000000e-19</td>
+      <td>1.792099e-04</td>
+      <td>43.749117</td>
     </tr>
   </tbody>
 </table>
