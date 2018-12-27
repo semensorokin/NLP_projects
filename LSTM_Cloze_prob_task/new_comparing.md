@@ -1,61 +1,20 @@
 
 
 ```python
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Fixing random state for reproducibility
-np.random.seed(19680801)
-
-# fake up some data
-spread = np.random.rand(50) * 100
-center = np.ones(25) * 50
-flier_high = np.random.rand(10) * 100 + 100
-flier_low = np.random.rand(10) * -100
-data = np.concatenate((spread, center, flier_high, flier_low))
-```
-
-
-```python
-data.shape
-fig1, ax1 = plt.subplots()
-ax1.set_title('Basic Plot')
-ax1.boxplot(data)
-```
-
-
-
-
-    {'whiskers': [<matplotlib.lines.Line2D at 0x7f5ffd1114a8>,
-      <matplotlib.lines.Line2D at 0x7f5ffd1117f0>],
-     'caps': [<matplotlib.lines.Line2D at 0x7f5ffd111b38>,
-      <matplotlib.lines.Line2D at 0x7f5ffd111e80>],
-     'boxes': [<matplotlib.lines.Line2D at 0x7f5ffd111358>],
-     'medians': [<matplotlib.lines.Line2D at 0x7f5ffd123208>],
-     'fliers': [<matplotlib.lines.Line2D at 0x7f5ffd123550>],
-     'means': []}
-
-
-
-
-![png](new_comparing_files/new_comparing_1_1.png)
-
-
-
-```python
 import pandas as pd
 !ls
 ```
 
-     atricals			   'prob_tag_with_ pymorphy.ipynb'
-     cloze_task_average_accuracy.xlsx   res.csv
-     cloze_task_raw_data.xlsx	    result_tag_new.xls
-     Compare_data.ipynb		    result_tag_new.xlsx
-     diction_for_tag_replacing.ipynb    result_tag_to_compare.xlsx
-     LSTM_probability.xlsx		    result_tag.xls
-     LSTM_prob_w_pos.xlsx		    tag_clearing.ipynb
+     atricals			    output.xlsx
+     cloze_task_average_accuracy.xlsx  'prob_tag_with_ pymorphy.ipynb'
+     cloze_task_raw_data.xlsx	    res.csv
+     Compare_data.ipynb		    result_tag_new.xls
+     diction_for_tag_replacing.ipynb    result_tag_new.xlsx
+     LSTM_probability.xlsx		    result_tag_to_compare.xlsx
+     LSTM_prob_w_pos.xlsx		    result_tag.xls
+     new_comparing_files		    tag_clearing.ipynb
      new_comparing.ipynb		    Tag_cloze_task.ipynb
-     output.xlsx			    Untitled1.ipynb
+     new_comparing.md		    Untitled1.ipynb
 
 
 drop all rows were we don't have a contex as a stimulus
@@ -1917,10 +1876,6 @@ def plot_mean_prob_distribution(plot_data):
     plt.subplot(222)
     plt.bar(x= plotting.context_len.tolist(), height = plotting.frequency.tolist())
     plt.ylim(0,0.5)
-    
-    plt.subplot(212)
-    plt.bar(x= plotting.context_len.tolist(), height = plotting.frequency.tolist())
-    plt.ylim(0,0.5)
 
     _=plt.show()
     
@@ -1936,7 +1891,7 @@ plot_mean_prob_distribution(plot_data)
 
 
 
-![png](new_comparing_files/new_comparing_18_1.png)
+    <Figure size 640x480 with 2 Axes>
 
 
 Compute median and plot it. Why it is also necessary? Because the median values are more stable and less dependant on the "emmissions" of the model.
@@ -1960,12 +1915,10 @@ def plot_median_distribution(plot_data):
     x1 = plot_data.groupby('context_len').sum()
     x1 = x1.reset_index(level=['context_len'])
     plotting = x1
-    print(x1)
 
     plotting['mediann'] = plotting['prob'].apply(mediann)
     
     data = np.array(plotting.prob)
-    print(data.shape)
 
     plt.subplot(221)
     plot1, =plt.plot(plotting.context_len.tolist(), plotting.mediann.tolist(), 'b--', label="$y=x^2$")
@@ -2000,36 +1953,8 @@ plot_median_distribution(plot_data)
       self[name] = value
 
 
-        context_len                                              shown  \
-    0             1  ААвторВВВВВВВВВВВВВВВВаняВзявВластьВоВозможнос...   
-    1             2  А промыватьАвтор принадлежитВ багажникеВ вопро...   
-    2             3  А промывать маннуюАвтор принадлежит кВ багажни...   
-    3             4  А промывать манную крупуАвтор принадлежит к чи...   
-    4             5  А промывать манную крупу передАвтор принадлежи...   
-    5             6  А промывать манную крупу перед тем‚Автор прина...   
-    6             7  А промывать манную крупу перед тем‚ какАвтор п...   
-    7             8  А промывать манную крупу перед тем‚ как варить...   
-    8             9  А промывать манную крупу перед тем‚ как варить...   
-    9            10  А промывать манную крупу перед тем‚ как варить...   
-    10           11  Ваня раскрыл было рот‚ но понял‚ что что-то не...   
-    
-                                                     prob  
-    0   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...  
-    1   [0.0, 0.9047619047619048, 0.0, 0.0, 0.0, 0.0, ...  
-    2   [0.3333333333333333, 0.22580645161290322, 0.0,...  
-    3   [0.0, 0.0, 0.01639344262295082, 0.0, 0.4, 0.0,...  
-    4   [0.0, 0.016129032258064516, 0.6290322580645161...  
-    5   [1.0, 0.015873015873015872, 0.0491803278688524...  
-    6   [0.6666666666666666, 0.8870967741935484, 0.473...  
-    7   [0.26666666666666666, 0.06779661016949153, 0.0...  
-    8   [0.6, 0.49206349206349204, 0.16666666666666666...  
-    9   [0.0, 0.28, 0.0, 0.029411764705882353, 0.06493...  
-    10  [0.125, 0.5735294117647058, 0.0, 0.22641509433...  
-    (11,)
 
-
-
-![png](new_comparing_files/new_comparing_20_2.png)
+![png](new_comparing_files/new_comparing_18_1.png)
 
 
 
@@ -2078,7 +2003,7 @@ plot_mean_prob_distribution(plot_data_lstm)
 
 
 
-![png](new_comparing_files/new_comparing_24_1.png)
+![png](new_comparing_files/new_comparing_22_1.png)
 
 
 
@@ -2094,36 +2019,8 @@ plot_median_distribution(plot_data_lstm)
       del sys.path[0]
 
 
-        context_len                                              shown  \
-    0             1  НаОнВаняСделавЯДорогаНеВыходяИУОченьНаНаживка‚...   
-    1             2  На болотахОн ловкоВаня раскрылСделав мнеЯ сдел...   
-    2             3  На болотах оставалсяОн ловко подделВаня раскры...   
-    3             4  На болотах оставался ещёОн ловко поддел концом...   
-    4             5  На болотах оставался ещё лёд‚Он ловко поддел к...   
-    5             6  На болотах оставался ещё лёд‚ ноОн ловко подде...   
-    6             7  На болотах оставался ещё лёд‚ но наОн ловко по...   
-    7             8  На болотах оставался ещё лёд‚ но на берегахОн ...   
-    8             9  На болотах оставался ещё лёд‚ но на берегах ре...   
-    9            10  На болотах оставался ещё лёд‚ но на берегах ре...   
-    10           11  Ваня раскрыл было рот‚ но понял‚ что что-то не...   
-    
-                                                     prob  
-    0   [6.42355e-06, 6.83756e-05, 0.000194429, 0.0005...  
-    1   [0.000137509, 0.004475961, 0.004079005, 0.0029...  
-    2   [0.124898523, 0.000468281, 0.467625082, 6.3116...  
-    3   [0.002192784, 0.045508154, 0.66102916, 0.16416...  
-    4   [0.039916713, 2.0346e-06, 0.004546021, 0.00085...  
-    5   [0.031502113, 0.051944204, 0.958914459, 0.1155...  
-    6   [0.003701243, 0.07215149, 0.001715297, 0.82618...  
-    7   [0.014211794, 0.002742183, 0.241921723, 0.0154...  
-    8   [0.000669886, 0.575578451, 0.13798739, 0.00255...  
-    9   [0.003874259, 0.45231384, 0.000377545, 0.00250...  
-    10  [0.000886227, 0.00881911, 0.014447753, 0.00150...  
-    (11,)
 
-
-
-![png](new_comparing_files/new_comparing_25_2.png)
+![png](new_comparing_files/new_comparing_23_1.png)
 
 
 
